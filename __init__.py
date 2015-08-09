@@ -44,13 +44,60 @@ def get_dice_color(num):
     return greensp + str(num) + esp
 
 def get_dice_html(dice):
-    rstring = "1:<strong>" + get_dice_color(dice[1]) + "</strong>  " +\
+    rstring = "<pre><strong>Dice available:</strong>" + \
+              "1:<strong>" + get_dice_color(dice[1]) + "</strong>  " +\
               "2:<strong>" + get_dice_color(dice[2]) + "</strong>  " +\
               "3:<strong>" + get_dice_color(dice[3]) + "</strong>  " +\
               "4:<strong>" + get_dice_color(dice[4]) + "</strong>  " +\
               "5:<strong>" + get_dice_color(dice[5]) + "</strong>  " +\
-              "6:<strong>" + get_dice_color(dice[6]) + "</strong>"
+              "6:<strong>" + get_dice_color(dice[6]) + "</strong></pre>"
     return rstring
+
+def get_dice_from_db(game_id):
+    dice = {}
+    db = get_db()
+    cur = db.cursor()
+    db_result = cur.execute("SELECT * from dice where game_id=?", GAMEID)
+    if len(db_result.fetchall()) > 0:
+        db_result = cur.execute ("SELECT d1,d2,d3,d4,d5,d6 from dice where game_id=?", GAMEID)
+        results = db_result.fetchall()
+        if len(results) > 0:
+            print "RESULTS: " + str(results[0])
+            for i in range (0, len(results[0])):
+                dice[i+1] = results[0][i]
+        else:
+            print "ERROR NO RESULTS"
+    else:
+        print "SETTING DICE"
+        dice = get_dice(get_num_players())
+        cur.execute("INSERT INTO dice (d1,d2,d3,d4,d5,d6,game_id) VALUES (?,?,?,?,?,?,?)", \
+                    (dice[1],  dice[2], dice[3], dice[4], dice[5], dice[6], GAMEID,))
+        db.commit()
+    return dice
+
+def get_playset_html():
+    playset_html = '<h2>Relationships</h2>\n'
+                       
+    pd = parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
+    last_group = ''
+    group_num = 0
+    for entry in pd['relationships']:
+        entry_id = str(group_num) + "_" + str(entry.num)
+        if last_group == '':
+            last_group = entry.group
+            group_num += 1
+            playset_html += "<h3>" + str(group_num) + ". " + entry.group + "</h3>\n" + \
+                            '<ul class="list-group">'
+        if not last_group == entry.group:
+            last_group = entry.group
+            group_num += 1
+            playset_html += "</ul>" + \
+                            "<h3>"  + str(group_num) + ". " + entry.group + "</h3>\n" + \
+                            '<ul class="list-group">'
+        playset_html += '<li data="r' + entry_id + '" class="p_rel_item list-group-item">' + \
+                        str(entry.num) + ". " + entry.name + ' / ' + entry.pair + '</li>'
+    playset_html += '</ul>'
+    return playset_html
 
 def create_app(configfile=None):
     app = Flask(__name__)
@@ -58,6 +105,11 @@ def create_app(configfile=None):
     app.extensions['bootstrap']['cdns']['jquery'] = StaticCDN()
     app.extensions['bootstrap']['cdns']['bootstrap'] = StaticCDN()
     app.secret_key = 'K\x9a\xa1\xa1\x84\x1a\x9b\xdc\xb3m\x0c\xdf[\x1c;\xc1S\xbd\xd6\x90\xec#\xdaX'
+
+    #@app.route('/get_setup_status', methods=('POST', 'GET'))
+    #def get_setup_status():
+    #    dice_html = get_dice_html(get_dice_from_db(GAMEID))
+    #    return ''
 
     @app.route('/play', methods=('POST', 'GET'))
     def play():
@@ -71,32 +123,13 @@ def create_app(configfile=None):
             players = get_players()
             return render_template('select_player.html', players=players)
         else:
-            pd = parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
-            dice = {}
-            db = get_db()
-            cur = db.cursor()
-            db_result = cur.execute("SELECT * from dice where game_id=?", GAMEID)
-            if len(db_result.fetchall()) > 0:
-                print "ALREADY STARTED"
-                db_result = cur.execute ("SELECT d1,d2,d3,d4,d5,d6 from dice where game_id=?", GAMEID)
-                results = db_result.fetchall()
-                if len(results) > 0:
-                    print "RESULTS: " + str(results[0])
-                    for i in range (0, len(results[0])):
-                        dice[i+1] = results[0][i]
-                else:
-                    print "ERROR NO RESULTS"
-            else:
-                print "SETTING DICE"
-                dice = get_dice(get_num_players())
-                cur.execute("INSERT INTO dice (d1,d2,d3,d4,d5,d6,game_id) VALUES (?,?,?,?,?,?,?)", \
-                            (dice[1],  dice[2], dice[3], dice[4], dice[5], dice[6], GAMEID,))
-                db.commit()
+            #pd = parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
+            #dice = get_dice_from_db(GAMEID)
             return render_template('play.html',
                                    player=session['player'],
-                                   playset=pd,
                                    playset_name='Main St.',
-                                   dice_html=get_dice_html(dice))
+                                   dice_html=get_dice_html(get_dice_from_db(GAMEID)),
+                                   playset_html = get_playset_html())
 
     @app.route('/endgame', methods=('POST', 'GET'))
     def endgame():
