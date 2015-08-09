@@ -1,0 +1,32 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link href="/static/css/jquery.mobile-1.4.5.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="static/jquery.mobile-1.4.5.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div data-role="page" id="demo-page" data-url="demo-page">
+  <div role="main" class="ui-content">
+    <h1>Playset: {{ playset_name }}</h1>
+  <p>Playing as {{ player }}. <a href="/changeplayer">Change Player</a></p>
+  
+  <p>{{ playset["relationships"][0].name }}</p>
+  <form action="endgame">
+    <button type="submit" class="btn btn-default" id="endBtn">End Game</button>
+  </form>
+  </div><!-- /content -->
+  <div data-role="footer" data-theme="b">
+    <h1>Dice available:  1:2 2:4 3:3 4:2 5:1 6:2</h1>
+  </div><!-- /footer -->
+</div>
+{% endblock %}

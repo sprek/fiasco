@@ -1,0 +1,12 @@
+import sqlite3 as lite
+
+def create_db():
+    con = lite.connect('players.db')
+    with con:
+        cur = con.cursor()
+        cur.execute("DROP TABLE IF EXISTS players")
+        cur.execute("CREATE TABLE players (name TEXT, ip TEXT, secret TEXT)")
+        cur.execute("INSERT INTO players VALUES(\"Edmond\", \"192.168.20.1\", \"CCDDCDCDDD\")")
+    con.close()
+
+create_db()

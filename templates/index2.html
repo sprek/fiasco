@@ -1,0 +1,36 @@
+{% extends "bootstrap/base.html" %}
+
+{% block scripts %}
+{{super()}}
+<script type=text/javascript>
+  $(function() {
+  $("#fileRepInput").keypress(function (e) {
+  if (e.which == 13) {
+  $("#fileRepBtn").click()
+  }
+  });
+
+  
+  $("#fileRepBtn").bind('click', function(){
+  $("#fileRepResponse").val("");
+  alert("test");
+  });
+
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <h2>Test</h2>
+  <form role="form">
+    <div class="form-group">
+      <label for="hash">MD5 Hash:</label>
+      <input type="text" class="form-control" id="fileRepInput">
+    </div>
+    <button type="button" class="btn btn-primary" id="fileRepBtn">Get File Reputation</button>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link href="/static/css/jquery.mobile-1.4.5.min.css" rel="stylesheet">
+<link href="/static/panel.css" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="static/jquery.mobile-1.4.5.min.js"></script>
+<script type=text/javascript>
+$( document ).on( "pagecreate", "#demo-page", function() {
+  $( document ).on( "swipeleft swiperight", "#demo-page", function( e ) {
+    // We check if there is no open panel on the page because otherwise
+    // a swipe to close the left panel would also open the right panel (and v.v.).
+    // We do this by checking the data that the framework stores on the page element (panel: open).
+    if ( $( ".ui-page-active" ).jqmData( "panel" ) !== "open" ) {
+      if ( e.type === "swiperight" ) {
+        $( "#left-panel" ).panel( "open" );
+      }
+    }
+  });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div data-role="page" id="demo-page" data-url="demo-page">
+  <div data-role="header" data-theme="b">
+    <h1>Swipe left or right</h1>
+    <a href="#left-panel" data-icon="carat-r" data-iconpos="notext" data-shadow="false" data-iconshadow="false" class="ui-nodisc-icon">Open left panel</a>
+  </div><!-- /header -->
+  <div role="main" class="ui-content">
+    <h1>Playset: {{ playset_name }}</h1>
+  <p>Playing as {{ player }}. <a href="/changeplayer">Change Player</a></p>
+  
+  <p>{{ playset["relationships"][0].name }}</p>
+  <form action="endgame">
+    <button type="submit" class="btn btn-default" id="endBtn">End Game</button>
+  </form>
+  </div><!-- /content -->
+  <div data-role="panel" id="left-panel" data-theme="b">
+    <p>Left reveal panel.</p>
+    <a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-left ui-btn-right">Close</a>
+    <table>
+      <tbody>
+        <tr>
+          <td>6:</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>5:</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>4:</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>3:</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td>2:</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>1:</td>
+          <td>3</td>
+        </tr>
+      </tbody>
+    </table>
+    <td>
+      
+  </div><!-- /panel -->
+</div>
+{% endblock %}

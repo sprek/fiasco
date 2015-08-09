@@ -1,0 +1,32 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Playset: {{ playset_name }}</h1>
+  <p>Playing as {{ player }}. <a href="/changeplayer">Change Player</a></p>
+  
+  <p>{{ playset["relationships"][0].name }}</p>
+  <form action="endgame">
+    <button type="submit" class="btn btn-default" id="endBtn">End Game</button>
+  </form>
+  </br>
+</div><!-- /container -->
+
+<div class="container">
+  <div class="footer navbar-fixed-bottom">
+    <pre><strong>Dice available:</strong> {{dice_html|safe}} </pre>
+  </div><!-- /footer -->
+</div>
+{% endblock %}

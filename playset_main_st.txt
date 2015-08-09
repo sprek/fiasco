@@ -1,0 +1,219 @@
+
+@ relationships
+1 family
+  1.1 parent-in-law / son or daughter-in-law
+  1.2 cousin / cousin
+  1.3 sibling / sibling
+  1.4 parent / child or stepchild
+  1.5 grandparent / grandchild
+  1.6 distant relative / distant relative
+
+2 work
+  2.1 former co-worker / former co-worker
+  2.2 current co-worker / current co-worker
+  2.3 supervisor / employee
+  2.4 tradesman / client
+    2.4a.1 mechanic
+    2.4a.2 plumber
+    2.4a.3 decorator
+    2.4a.4 landscaper
+  2.5 salesman / customer
+  2.6 professional / client
+    2.6a.1 pastor
+    2.6a.2 doctor
+    2.6a.3 lawyer
+    2.6a.4 dentist
+    2.6a.5 drug dealer
+
+3 friendship
+  3.1 manipulator / victim
+  3.2 old buddy / old buddy
+  3.3 drug friend / drug friend
+  3.4 friendly rival / friendly rival
+  3.5 friends with benfits / friends with benefits
+  3.6 bitter social adversaries / bitter social adversaries
+
+4 romance
+  4.1 former spouse / former spouse
+  4.2 current spouse / current spouse
+  4.3 life-long crush / object of crush
+  4.4 one-time fling / one-time fling
+  4.5 lover / lover
+  4.6 former lover / former lover
+
+5 crime
+  5.1 corrupt official / local big shot
+  5.2 gambler / bookie
+  5.3 thief / thief
+    5.3a.1 shoplifter
+    5.3a.2 burglar
+    5.3a.3 car thief
+    5.3b.1 shoplifter
+    5.3b.2 burglar
+    5.3b.3 car thief
+  5.4 con artist / mark
+  5.5 hoodlum / hoodlum
+    5.5a.1 racketeer
+    5.5a.2 knucklehead
+    5.5a.3 delinquent
+    5.5b.1 racketeer
+    5.5b.2 knucklehead
+    5.5b.3 delinquent
+  5.6 drug person / drug person
+    5.6a.1 dealer
+    5.6a.2 manufacturer
+    5.6a.3 distributor
+    5.6b.1 dealer
+    5.6b.2 manufacturer
+    5.6b.3 distributor
+
+6 community
+  6.1 elected official / elected official
+    6.1a.1x mayor
+    6.1a.2x health commissioner
+    6.1a.3x transportation commissioner
+    6.1a.4x environmental commissioner
+    6.1a.5x agriculture commissioner
+    6.1a.6x education commissioner
+    6.1b.1x mayor
+    6.1b.2x health commissioner
+    6.1b.3x transportation commissioner
+    6.1b.4x environmental commissioner
+    6.1b.5x agriculture commissioner
+    6.1b.6x education commissioner
+  6.2 church minister / church member
+  6.3 rec sports league / rec sports league
+  6.4 case worker / client
+  6.5 A A or narcotics anonymous sponsor / participant
+  
+@ Needs
+1 To get out
+  1.1 of this town before they realize you took it
+  1.2 of this town, to escape family
+  1.3 of the gang
+  1.4 of a relationship with a lover
+  1.5 of the obligation to a frail relative in your care
+  1.6 of a crushing debt coming due
+2 To get even
+  2.1 with bad people, who think they are so tough
+  2.2 with this town, for what it has turned you into
+  2.3 with a corrupt official
+  2.4 with a family member
+  2.5 with a co-worker
+  2.6 with a rival
+3 To get rich
+  3.1 through stealing a drug stash
+  3.2 through robbing a business
+  3.3 through tricking a handicapped guy
+  3.4 through the death of an elderly person
+  3.5 through political back-scratching
+  3.6 through a misplaced suitcase full of cash
+4 To get respect
+  4.1 from this town, by bringing down the machine
+  4.2 from this town, by proving your convictions
+  4.3 from your lover, by taking the fall
+  4.4 from the police, by turning in your own kin
+  4.5 from a family member, by rescuing them from ruin
+  4.6 from yourself, by finally doing it once and for all
+5 To get the truth
+  5.1 about why they are all so shut-mouthed
+  5.2 about the sheriff's political corruption
+  5.3 about why he really came here
+  5.4 about what she did behind The Patio
+  5.5 about your real parents
+  5.6 about the mistake that haunts you
+6 To get laid
+  6.1 to get it over with
+  6.2 by that sweet thing you've been thinking on
+  6.3 because you need the raise that badly
+  6.4 by an old lover, to start over
+  6.5 by an old lover, to further your scheme
+  6.6 by your sweetheart, who is acting squirrelly
+
+@ locations
+1 Main Street
+  1.1 Peace Haven Church
+  1.2 El Perro Alto Mexican Restaurant
+  1.3 Royall's Drug Store; Pharmacy in the back, soda fountain up front
+  1.4 Shater and Hazelbrook, LLC, the only lawyers in town
+  5.5 Commercial Bank, the only bank in town
+  5.6 Vantage Services, medical claims processor
+2 Commerce Street
+  2.1 Suds and Duds, coin operated laundromat
+  2.2 Municpal building, police station, courts and City Hall
+  2.3 Family Medical Clinic, the only doctor in town
+  2.4 New Outlook, tanning salon and weight loss center
+  2.5 The Patio, a movie picture house
+  2.6 Bill Rivers' Pool Room, for pool and illegal gambling
+3 Out by the Interstate
+  3.1 Chicken Hut, fast food restaurant
+  3.2 Davenport's Tire and Tractor, tire shop and tractor repair
+  3.3 Rose's Village Motel, convenient to the highway
+  3.4 The Quick-Pik, gas station and convenience store
+  3.5 Durable Paper Goods, paper bag manufacturing plant
+  3.6 Accurate Automotive, used cars
+4 Up Center Road
+  4.1 J&K Gravel: Gravel, stone, and quarried materials
+  4.2 The old fish house, an abandoned roadhouse
+  4.3 Center Road Animal Care, large animal veterinarian
+  4.4 Lyman C. Mills Consolidated High School
+  4.5 Spiller's, funeral services since 1911
+  4.6 Charles Green Landscaping, lawn, care and excavation
+5 Out and About
+  5.1 Town parking lot beside the freight tracks
+  5.2 Red Run State Park
+  5.3 A farmer's field out past Surry Avenue
+  5.4 The ball field
+  5.5 Woods up around Hickory Terrace
+  5.6 Construction sit enext to Accurate Automotive
+6 Residences
+  6.1 Van parked behind Royall's
+  6.2 Trail out back of the high school
+  6.3 Apartment above Suds and Duds
+  6.4 Farmhouse up Center Road
+  6.5 Split-level ranch on Surry Avenue
+  6.6 Mansion out by Hickory Terrace
+
+@ objects
+1 Untoward
+  1.1 Porn stash / sex gear
+  1.2 Welfare check / food stamps
+  1.3 Garage full of Amway products
+  1.4 Mink farm
+  1.5 Klan outfit / hate paraphernalia
+  1.6 Eviction notice
+2 Transportation
+  2.1 golf cart
+  2.2 New pickup truck
+  2.3 Panel truck
+  2.4 Small plane
+  2.5 Pontoon party boat
+  2.6 Dirt bike
+3 Weapon
+  3.1 Shotgun
+  3.2 Machete
+  3.3 Poisonous snake
+  3.4 Handgun
+  3.5 Pipe bomb
+  3.6 Firefighter's Halligan tool
+4 Information
+  4.1 Secret recipe
+  4.2 An overheard conversation
+  4.3 Legal records
+  4.4 Love letter
+  4.5 List written in a Christmas card
+  4.6 Photographs
+5 Valueables
+  5.1 Drug stash
+  5.2 Mason jar full of gold coins
+  5.3 Comic book collection
+  5.4 Vintage car
+  5.5 Purebred animal
+  5.6 Suitcase full of cache
+6 Sentimental
+  6.1 Newborn baby
+  6.2 War memorabilia
+  6.3 Roadside accident shrine
+  6.4 Mathematics trophy
+  6.5 Wedding ring
+  6.6 Heirloom silver tea set

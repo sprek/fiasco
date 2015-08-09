@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+        <script src="static/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/jquery.mobile-1.4.5.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/css/jquery.mobile-1.4.5.min.css" rel="stylesheet">
+    <link href="static/panel.css" rel="stylesheet">
+  </head>
+  <body>
+
+<div data-role="page" id="demo-page" data-url="demo-page">
+  <div data-role="header" data-theme="b">
+    <table>
+      <tbody>
+        <tr>
+          <td>6:</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>5:</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>4:</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>3:</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td>2:</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>1:</td>
+          <td>3</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  </body>
+</html>
