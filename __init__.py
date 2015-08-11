@@ -1,9 +1,10 @@
 from fiasco import parse_playset
 from flask import Flask, render_template, request, session, redirect, url_for
+from flask import g, jsonify
 from flask_bootstrap import Bootstrap, StaticCDN
-from flask import g
 from cgi import escape
 import sqlite3
+import json
 from random import randint
 
 DATABASE = '/Users/danielsprechman/development/projects/fiasco/database/players.db'
@@ -94,10 +95,29 @@ def get_playset_html():
             playset_html += "</ul>" + \
                             "<h3>"  + str(group_num) + ". " + entry.group + "</h3>\n" + \
                             '<ul class="list-group">'
-        playset_html += '<li data="r' + entry_id + '" class="p_rel_item list-group-item">' + \
-                        str(entry.num) + ". " + entry.name + ' / ' + entry.pair + '</li>'
+        select_html1 = ''
+        select_html2 = ''
+
+        if len(entry.name_options) > 0:
+            select_html1 = '&nbsp;&nbsp;(<select class="btn btn-mini">'
+            for opt in entry.name_options:
+                select_html1 += '<option>' + opt + '</option>'
+            select_html1 += '</select>)'
+        if len(entry.pair_options) > 0:
+            select_html2 = '&nbsp;&nbsp;(<select class="btn btn-mini">'
+            for opt in entry.pair_options:
+                select_html2 += '<option>' + opt + '</option>'
+            select_html2 += '</select>)'
+        playset_html += '<li class="p_rel_item list-group-item">' + \
+                        '<input type="radio" id="radio_' + entry_id + '">' + \
+                        '&nbsp;&nbsp;&nbsp;' + str(entry.num) + ". " + entry.name + select_html1 + '&nbsp;&nbsp; / &nbsp;&nbsp;' + entry.pair + select_html2 + '</li>'
     playset_html += '</ul>'
     return playset_html
+
+#def get_playset_meta_html():
+#
+#    
+#    return json.dumps({'data' : 'asdf'})
 
 def create_app(configfile=None):
     app = Flask(__name__)
@@ -106,10 +126,20 @@ def create_app(configfile=None):
     app.extensions['bootstrap']['cdns']['bootstrap'] = StaticCDN()
     app.secret_key = 'K\x9a\xa1\xa1\x84\x1a\x9b\xdc\xb3m\x0c\xdf[\x1c;\xc1S\xbd\xd6\x90\xec#\xdaX'
 
-    #@app.route('/get_setup_status', methods=('POST', 'GET'))
-    #def get_setup_status():
-    #    dice_html = get_dice_html(get_dice_from_db(GAMEID))
-    #    return ''
+    #@app.route('/test', methods=('POST', 'GET'))
+    #def test():
+    #    data = {"data" : "asdf"}
+    #    print "RETURNING: " + json.dumps(data)
+    #    return render_template('test.html', td=json.dumps(data))
+    #    #return jsonify({'data' : 'asdf'})
+
+    @app.route('/get_setup_status', methods=('POST', 'GET'))
+    def get_setup_status():
+        dice_html = get_dice_html(get_dice_from_db(GAMEID))
+        data = {'dice_html' : dice_html}
+        #data = {'test1' : 'a', 'test2' : 'b'}
+        #print "RETURNING: " + str(jsonify(data))
+        return jsonify(data)
 
     @app.route('/play', methods=('POST', 'GET'))
     def play():
@@ -200,8 +230,8 @@ def create_app(configfile=None):
             session['player'] = player
         return render_template('index.html', player=player)
 
-    @app.route('/test', methods=('GET', 'POST'))
-    def test():
-        return render_template('test2.html')
+    #@app.route('/test', methods=('GET', 'POST'))
+    #def test():
+    #    return render_template('test2.html')
     
     return app

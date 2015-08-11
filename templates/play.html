@@ -2,6 +2,7 @@
 
 {% block head %}
 {{ super() }}
+<link href="static/css/play.css" rel="stylesheet">
 {% endblock %}
 
 {% block styles %}
@@ -11,33 +12,33 @@
 {% block scripts %}
 {{ super() }}
 <script type=text/javascript>
-// constantly refresh status list
-//$(document).ready(function () {
-//  var interval = 1000;   //number of mili seconds between each call
-//  var refresh = function() {
-//      $.ajax({
-//          url: "/get_setup_status",
-//          cache: false,
-//          success: function(html) {
-//              $('#playsetList).html(html);
-//              setTimeout(function() {
-//                  refresh();
-//              }, interval);
-//          }
-//      });
-//  };
-//  refresh();
 
+  $(document).ready(function () {
+    var interval = 1000;   //number of mili seconds between each call
+    var refresh = function() {
+        $.ajax({
+            url: "/get_setup_status",
+            cache: false,
+            success: function(data) {
+                $("#diceFooter").html(data["dice_html"])
+                setTimeout(function() {
+                    refresh();
+                }, interval);
+            }
+        });
+    };
+  refresh();
   
 // playset buttons added dynamically
-$(document).on('click', '.p_rel_item', function(e) {
-  alert ($(this).attr('data'))
-});
+//$(document).on('click', '.p_rel_item', function(e) {
+//  alert ($(this).attr('data'));
+//  });
+//});
 </script>
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container main_body">
   <h1>Playset: {{ playset_name }}</h1>
   <p>Playing as {{ player }}. <a href="/changeplayer">Change Player</a></p>
 
@@ -51,9 +52,9 @@ $(document).on('click', '.p_rel_item', function(e) {
   </br>
 </div><!-- /container -->
 
-<div class="container">
-  <div class="footer navbar-fixed-bottom" id="dice_footer">
+
+  <div id="diceFooter">
     {{ dice_html|safe }}
   </div><!-- /footer -->
-</div>
+
 {% endblock %}
