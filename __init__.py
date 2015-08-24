@@ -10,15 +10,15 @@ from random import randint
 DATABASE = '/Users/danielsprechman/development/projects/fiasco/database/players.db'
 GAMEID = "0"
 
-def get_players():
-    cur = get_db().cursor()
-    db_result = cur.execute("SELECT name from players")
-    results = db_result.fetchall()
-    players = []
-    for name in results:
-        if len(name) > 0:
-            players.append(name[0])
-    return players
+#def get_players(game_id):
+#    cur = get_db().cursor()
+#    db_result = cur.execute("SELECT name from player where game_id = ?", game_id)
+#    results = db_result.fetchall()
+#    players = []
+#    for name in results:
+#        if len(name) > 0:
+#            players.append(name[0])
+#    return players
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -26,8 +26,8 @@ def get_db():
         db = g._database = sqlite3.connect(DATABASE)
     return db
 
-def get_num_players():
-    return len(get_players())
+def get_num_players(game_id):
+    return len(get_players(game_id))
 
 def get_dice(num_players):
     dice = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
@@ -76,6 +76,21 @@ def get_dice_from_db(game_id):
         db.commit()
     return dice
 
+def initialize_game(game_id):
+    players = get_players(game_id)
+    rand_ids = random.shuffle(players)
+    db = get_db()
+    cur = db.cursor()
+    for i, player in enumerate(players):
+        pleft = get_left_id(i)
+        pright = get_right_id(i)
+        cur.execute("UPDATE player SET id=?, p_left_id=?, p_right_id=? where game_id=? and name=?",
+                    i, pleft, pright, game_id, player)
+        db.commit()
+    cur.execute("UPDATE status SET round=? where game_id=?", 0, game_id)
+    db.commit()
+        
+
 def get_playset_html():
     playset_html = '<h2>Relationships</h2>\n'
                        
@@ -100,19 +115,43 @@ def get_playset_html():
 
         if len(entry.name_options) > 0:
             select_html1 = '&nbsp;&nbsp;(<select class="btn btn-mini">'
-            for opt in entry.name_options:
-                select_html1 += '<option>' + opt + '</option>'
+            for i, opt in enumerate(entry.name_options):
+                select_html1 += '<option val="'+ str(i) +'" id="' + entry_id + '_g1_o">' + opt + '</option>'
             select_html1 += '</select>)'
         if len(entry.pair_options) > 0:
             select_html2 = '&nbsp;&nbsp;(<select class="btn btn-mini">'
-            for opt in entry.pair_options:
-                select_html2 += '<option>' + opt + '</option>'
+            for i, opt in enumerate(entry.pair_options):
+                select_html2 += '<option val="'+ str(i) +'" id="' + entry_id + '"_g2_o">' + opt + '</option>'
             select_html2 += '</select>)'
         playset_html += '<li class="p_rel_item list-group-item">' + \
                         '<input type="radio" id="radio_' + entry_id + '">' + \
-                        '&nbsp;&nbsp;&nbsp;' + str(entry.num) + ". " + entry.name + select_html1 + '&nbsp;&nbsp; / &nbsp;&nbsp;' + entry.pair + select_html2 + '</li>'
+                        '&nbsp;&nbsp;&nbsp;' + str(entry.num) + '. ' + \
+                        '<span id="text_'+ entry_id + '_g1">' + entry.name + select_html1 + \
+                        '&nbsp;&nbsp; / &nbsp;&nbsp;<span id="text_' + entry_id + '_g2">' + \
+                        entry.pair + select_html2 + '</li>'
     playset_html += '</ul>'
     return playset_html
+
+def get_left_id(id, num_players):
+    new_id = id-1
+    if new_id < 0:
+        new_id = len(players) -1
+    return new_id
+
+def get_right_id(id, num_players):
+    new_id = id+1
+    if new_id > len(players):
+        new_id = 0
+    return new_id
+
+def get_neighbors(player, game_id):
+    #players = get_players(game_id)
+    db = get_db()
+    cur = db.cursor()
+    
+    
+    
+    
 
 #def get_playset_meta_html():
 #
@@ -144,19 +183,19 @@ def create_app(configfile=None):
     @app.route('/play', methods=('POST', 'GET'))
     def play():
         player = request.args.get('player', '')
+        players = get_players(GAME_ID)
         if player:
-            players = get_players()
             if player in players:
                 session['player'] = player
-                
         if not 'player' in session or len(session['player']) == 0:
-            players = get_players()
             return render_template('select_player.html', players=players)
         else:
             #pd = parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
             #dice = get_dice_from_db(GAMEID)
+            initialize_game(GAME_ID)
             return render_template('play.html',
                                    player=session['player'],
+                                   players=players,
                                    playset_name='Main St.',
                                    dice_html=get_dice_html(get_dice_from_db(GAMEID)),
                                    playset_html = get_playset_html())
@@ -177,7 +216,7 @@ def create_app(configfile=None):
     @app.route('/clearplayers', methods=('POST', 'GET'))
     def clearplayers():
         cur = get_db().cursor()
-        cur.execute("delete from players")
+        cur.execute("delete from player")
         db.commit()
         return ''
     
@@ -188,13 +227,13 @@ def create_app(configfile=None):
         name = request.form['data']
         print "REMOVING " + name
         #uname = HTMLParser.HTMLParser().unescape(name)
-        cur.execute("delete from players where name=?", (name,))
+        cur.execute("delete from player where name=?", (name,))
         db.commit()
         return ''
 
     @app.route('/playerlist', methods=('POST', 'GET'))
     def playerlist():
-        players = get_players()
+        players = get_players(GAME_ID)
         result_str = '<ul class="list-group">'
         found_current_player = False
         for name in players:
@@ -210,12 +249,12 @@ def create_app(configfile=None):
     @app.route('/playerjoin', methods=('POST', 'GET'))
     def playerjoin():
         name = request.form['data']
-        if not name in get_players():
+        if not name in get_players(GAME_ID):
             print "INSERTING PLAYER: " + name
             db = get_db()
             cur = db.cursor()
-            #sql = "INSERT INTO players (name, game_id) VALUES ('%s', '%s')"
-            cur.execute("INSERT INTO players (name, game_id) VALUES (?, ?)", (name, GAMEID,))
+            #sql = "INSERT INTO player (name, game_id) VALUES ('%s', '%s')"
+            cur.execute("INSERT INTO player (name, game_id) VALUES (?, ?)", (name, GAMEID,))
             db.commit()
         session['player'] = name
         return ''
