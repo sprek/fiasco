@@ -91,12 +91,9 @@ def parse_playset(file):
                     cur_list[-1].entries[-1].flag = 'same'
             elif m3:
                 cur_list.append(EntryGroup(m3.group(2).strip(), []))
+    pf.close()
     return playset
 
-def insert_playset_into_db(playset, db):
-    cur = db.cursor()
-    
-    
 if __name__ == '__main__':
     main_playset = parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
     print("PLAYSET NAME: " + main_playset.name)

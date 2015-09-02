@@ -1,4 +1,3 @@
-from fiasco import parse_playset
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask import g, jsonify
 from flask_bootstrap import Bootstrap, StaticCDN
@@ -6,9 +5,11 @@ from cgi import escape
 import sqlite3
 import json
 from random import randint
+import player, dice, game_control, view, create_db, playset
+import os.path
 
-DATABASE = '/Users/danielsprechman/development/projects/fiasco/database/players.db'
-GAMEID = "0"
+DATABASE = 'fiasco.db'
+GAME_ID = "0"
 
 #def get_players(game_id):
 #    cur = get_db().cursor()
@@ -23,135 +24,57 @@ GAMEID = "0"
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
+        if os.path.isfile(DATABASE):
+            db = g._database = sqlite3.connect(DATABASE)
+        else:
+            create_db.create_db(DATABASE)
     return db
 
-def get_num_players(game_id):
-    return len(get_players(game_id))
+#def get_num_players(game_id):
+#    return len(get_players(game_id))
+#
+#def get_dice(num_players):
+#    dice = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
+#    for i in range(0,num_players*4):
+#        r = randint(1,6)
+#        dice[r] = dice[r] + 1
+#    return dice
 
-def get_dice(num_players):
-    dice = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
-    for i in range(0,num_players*4):
-        r = randint(1,6)
-        dice[r] = dice[r] + 1
-    return dice
+#def get_dice_from_db(game_id):
+#    dice = {}
+#    db = get_db()
+#    cur = db.cursor()
+#    db_result = cur.execute("SELECT * from dice where game_id=?", GAME_ID)
+#    if len(db_result.fetchall()) > 0:
+#        db_result = cur.execute ("SELECT d1,d2,d3,d4,d5,d6 from dice where game_id=?", GAME_ID)
+#        results = db_result.fetchall()
+#        if len(results) > 0:
+#            print "RESULTS: " + str(results[0])
+#            for i in range (0, len(results[0])):
+#                dice[i+1] = results[0][i]
+#        else:
+#            print "ERROR NO RESULTS"
+#    else:
+#        print "SETTING DICE"
+#        dice = get_dice(get_num_players())
+#        cur.execute("INSERT INTO dice (d1,d2,d3,d4,d5,d6,game_id) VALUES (?,?,?,?,?,?,?)", \
+#                    (dice[1],  dice[2], dice[3], dice[4], dice[5], dice[6], GAME_ID,))
+#        db.commit()
+#    return dice
 
-def get_dice_color(num):
-    greensp = "<span style='color:#00cc00'>"
-    redsp = "<span style='color:#dd0000'>"
-    esp = "</span>"
-    if num < 3:
-        return redsp + str(num) + esp
-    return greensp + str(num) + esp
-
-def get_dice_html(dice):
-    rstring = "<pre><strong>Dice available:</strong>" + \
-              "1:<strong>" + get_dice_color(dice[1]) + "</strong>  " +\
-              "2:<strong>" + get_dice_color(dice[2]) + "</strong>  " +\
-              "3:<strong>" + get_dice_color(dice[3]) + "</strong>  " +\
-              "4:<strong>" + get_dice_color(dice[4]) + "</strong>  " +\
-              "5:<strong>" + get_dice_color(dice[5]) + "</strong>  " +\
-              "6:<strong>" + get_dice_color(dice[6]) + "</strong></pre>"
-    return rstring
-
-def get_dice_from_db(game_id):
-    dice = {}
-    db = get_db()
-    cur = db.cursor()
-    db_result = cur.execute("SELECT * from dice where game_id=?", GAMEID)
-    if len(db_result.fetchall()) > 0:
-        db_result = cur.execute ("SELECT d1,d2,d3,d4,d5,d6 from dice where game_id=?", GAMEID)
-        results = db_result.fetchall()
-        if len(results) > 0:
-            print "RESULTS: " + str(results[0])
-            for i in range (0, len(results[0])):
-                dice[i+1] = results[0][i]
-        else:
-            print "ERROR NO RESULTS"
-    else:
-        print "SETTING DICE"
-        dice = get_dice(get_num_players())
-        cur.execute("INSERT INTO dice (d1,d2,d3,d4,d5,d6,game_id) VALUES (?,?,?,?,?,?,?)", \
-                    (dice[1],  dice[2], dice[3], dice[4], dice[5], dice[6], GAMEID,))
-        db.commit()
-    return dice
-
-def initialize_game(game_id):
-    players = get_players(game_id)
-    rand_ids = random.shuffle(players)
-    db = get_db()
-    cur = db.cursor()
-    for i, player in enumerate(players):
-        pleft = get_left_id(i)
-        pright = get_right_id(i)
-        cur.execute("UPDATE player SET id=?, p_left_id=?, p_right_id=? where game_id=? and name=?",
-                    i, pleft, pright, game_id, player)
-        db.commit()
-    cur.execute("UPDATE status SET round=? where game_id=?", 0, game_id)
-    db.commit()
-        
-
-def get_playset_html():
-    playset_html = '<h2>Relationships</h2>\n'
-                       
-    pd = parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
-    last_group = ''
-    group_num = 0
-    for entry in pd['relationships']:
-        entry_id = str(group_num) + "_" + str(entry.num)
-        if last_group == '':
-            last_group = entry.group
-            group_num += 1
-            playset_html += "<h3>" + str(group_num) + ". " + entry.group + "</h3>\n" + \
-                            '<ul class="list-group">'
-        if not last_group == entry.group:
-            last_group = entry.group
-            group_num += 1
-            playset_html += "</ul>" + \
-                            "<h3>"  + str(group_num) + ". " + entry.group + "</h3>\n" + \
-                            '<ul class="list-group">'
-        select_html1 = ''
-        select_html2 = ''
-
-        if len(entry.name_options) > 0:
-            select_html1 = '&nbsp;&nbsp;(<select class="btn btn-mini">'
-            for i, opt in enumerate(entry.name_options):
-                select_html1 += '<option val="'+ str(i) +'" id="' + entry_id + '_g1_o">' + opt + '</option>'
-            select_html1 += '</select>)'
-        if len(entry.pair_options) > 0:
-            select_html2 = '&nbsp;&nbsp;(<select class="btn btn-mini">'
-            for i, opt in enumerate(entry.pair_options):
-                select_html2 += '<option val="'+ str(i) +'" id="' + entry_id + '"_g2_o">' + opt + '</option>'
-            select_html2 += '</select>)'
-        playset_html += '<li class="p_rel_item list-group-item">' + \
-                        '<input type="radio" id="radio_' + entry_id + '">' + \
-                        '&nbsp;&nbsp;&nbsp;' + str(entry.num) + '. ' + \
-                        '<span id="text_'+ entry_id + '_g1">' + entry.name + select_html1 + \
-                        '&nbsp;&nbsp; / &nbsp;&nbsp;<span id="text_' + entry_id + '_g2">' + \
-                        entry.pair + select_html2 + '</li>'
-    playset_html += '</ul>'
-    return playset_html
-
-def get_left_id(id, num_players):
-    new_id = id-1
-    if new_id < 0:
-        new_id = len(players) -1
-    return new_id
-
-def get_right_id(id, num_players):
-    new_id = id+1
-    if new_id > len(players):
-        new_id = 0
-    return new_id
-
-def get_neighbors(player, game_id):
-    #players = get_players(game_id)
-    db = get_db()
-    cur = db.cursor()
-    
-    
-    
-    
+#def initialize_game(game_id):
+#    players = get_players(game_id)
+#    rand_ids = random.shuffle(players)
+#    db = get_db()
+#    cur = db.cursor()
+#    for i, player in enumerate(players):
+#        pleft = get_left_id(i)
+#        pright = get_right_id(i)
+#        cur.execute("UPDATE player SET id=?, p_left_id=?, p_right_id=? where game_id=? and name=?",
+#                    i, pleft, pright, game_id, player)
+#        db.commit()
+#    cur.execute("UPDATE status SET round=? where game_id=?", 0, game_id)
+#    db.commit()
 
 #def get_playset_meta_html():
 #
@@ -165,16 +88,9 @@ def create_app(configfile=None):
     app.extensions['bootstrap']['cdns']['bootstrap'] = StaticCDN()
     app.secret_key = 'K\x9a\xa1\xa1\x84\x1a\x9b\xdc\xb3m\x0c\xdf[\x1c;\xc1S\xbd\xd6\x90\xec#\xdaX'
 
-    #@app.route('/test', methods=('POST', 'GET'))
-    #def test():
-    #    data = {"data" : "asdf"}
-    #    print "RETURNING: " + json.dumps(data)
-    #    return render_template('test.html', td=json.dumps(data))
-    #    #return jsonify({'data' : 'asdf'})
-
     @app.route('/get_setup_status', methods=('POST', 'GET'))
     def get_setup_status():
-        dice_html = get_dice_html(get_dice_from_db(GAMEID))
+        dice_html = view.get_dice_html(dice.get_dice_from_db(GAME_ID, get_db()).dice)
         data = {'dice_html' : dice_html}
         #data = {'test1' : 'a', 'test2' : 'b'}
         #print "RETURNING: " + str(jsonify(data))
@@ -182,30 +98,29 @@ def create_app(configfile=None):
 
     @app.route('/play', methods=('POST', 'GET'))
     def play():
-        player = request.args.get('player', '')
-        players = get_players(GAME_ID)
-        if player:
-            if player in players:
-                session['player'] = player
+        db = get_db()
+        cur_player = request.args.get('player', '')
+        players = player.get_players_from_db(GAME_ID, db)
+        player_names = list(map(lambda x: x.name, players))
+        if cur_player:
+            if cur_player in players:
+                session['player'] = cur_player
         if not 'player' in session or len(session['player']) == 0:
-            return render_template('select_player.html', players=players)
+            return render_template('select_player.html', players=player_names)
         else:
             #pd = parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
-            #dice = get_dice_from_db(GAMEID)
-            initialize_game(GAME_ID)
+            #dice = get_dice_from_db(GAME_ID)
+            game_control.initialize_game(GAME_ID, get_db())
+            pd = playset.parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
             return render_template('play.html',
                                    player=session['player'],
-                                   players=players,
                                    playset_name='Main St.',
-                                   dice_html=get_dice_html(get_dice_from_db(GAMEID)),
-                                   playset_html = get_playset_html())
+                                   dice_html=view.get_dice_html(dice.get_dice_from_db(GAME_ID, get_db()).dice),
+                                   playset_html = view.get_playset_html(pd))
 
     @app.route('/endgame', methods=('POST', 'GET'))
     def endgame():
-        db = get_db()
-        cur = db.cursor()
-        cur.execute("delete from dice where game_id=?",GAMEID)
-        db.commit()
+        dice.clear_dice(GAME_ID, get_db())
         return redirect('/')
 
     @app.route('/changeplayer', methods=('POST', 'GET'))
@@ -222,52 +137,38 @@ def create_app(configfile=None):
     
     @app.route('/removeplayer', methods=('POST', 'GET'))
     def removeplayer():
-        db = get_db()
-        cur = db.cursor()
-        name = request.form['data']
-        print "REMOVING " + name
-        #uname = HTMLParser.HTMLParser().unescape(name)
-        cur.execute("delete from player where name=?", (name,))
-        db.commit()
+        player.remove_player(request.form['data'], GAME_ID, get_db())
         return ''
 
     @app.route('/playerlist', methods=('POST', 'GET'))
     def playerlist():
-        players = get_players(GAME_ID)
-        result_str = '<ul class="list-group">'
-        found_current_player = False
-        for name in players:
-            if 'player' in session and name == session['player']:
-                found_current_player = True
-            result_str += '<li class="list-group-item">' + name \
-                          + '<div class="pull-right"><a href="' + name + '" class="remove_player">Remove</a></div></li>'
-        result_str += '</ul>'
-        if not found_current_player:
-            session['player'] = ''
+        player_names = player.get_player_names_from_db(GAME_ID, get_db())
+        #print ("PLAYER NAMES IN PLAYERLIST: " + str(player_names))
+        #result_str = ''
+        #if (session['player'] in player_names):
+        #    player_names.remove(session['player'])
+        result_str = view.get_player_list_html(player_names)
+        #else:
+        #    session['player'] = ''
         return result_str
 
     @app.route('/playerjoin', methods=('POST', 'GET'))
     def playerjoin():
         name = request.form['data']
-        if not name in get_players(GAME_ID):
-            print "INSERTING PLAYER: " + name
-            db = get_db()
-            cur = db.cursor()
-            #sql = "INSERT INTO player (name, game_id) VALUES ('%s', '%s')"
-            cur.execute("INSERT INTO player (name, game_id) VALUES (?, ?)", (name, GAMEID,))
-            db.commit()
+        if not name in player.get_players_from_db(GAME_ID, get_db()):
+            print ("INSERTING PLAYER: " + name)
+            player.insert_player_into_db(player.Player(name=name, game_id=GAME_ID), db=get_db())
         session['player'] = name
         return ''
 
     @app.route('/', methods=('GET', 'POST'))
     def index():
-        #player = request.args.get('player', '')
-        player = ''
+        player_name = ''
         if 'player' in session:
-            player = session['player']
+            player_name = session['player']
         else:
-            session['player'] = player
-        return render_template('index.html', player=player)
+            session['player'] = player_name
+        return render_template('index.html', player=player_name)
 
     #@app.route('/test', methods=('GET', 'POST'))
     #def test():

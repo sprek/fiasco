@@ -4,14 +4,13 @@ def create_db(filename='fiasco.db'):
     con = lite.connect(filename)
     with con:
         cur = con.cursor()
-        cur.execute("DROP TABLE IF EXISTS players")
         cur.execute("DROP TABLE IF EXISTS dice")
         cur.execute("DROP TABLE IF EXISTS status")
         cur.execute("DROP TABLE IF EXISTS player")
         #cur.execute("DROP TABLE IF EXISTS sub_relationship")
         #cur.execute("CREATE TABLE relationship (id_num INT, p1_role TEXT, p2_role TEXT)")
         #cur.execute("CREATE TABLE sub_relationship (relationship_id INT, p1 BOOLEAN, p2 BOOLEAN)")
-        cur.execute("CREATE TABLE player (id_num INT, name TEXT, p_left_id INT, p_right_id INT, "
+        cur.execute("CREATE TABLE player (id_num INT, name TEXT, p_left_name TEXT, p_right_name TEXT, "
                     "rel_l_id INT, rel_l_role INT, rel_l_sub1 INT, rel_l_sub2 INT, "
                     "rel_r_id INT, rel_r_role INT, rel_r_sub1 INT, rel_r_sub2 INT, "
                     "game_id TEXT)")

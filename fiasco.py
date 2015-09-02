@@ -31,7 +31,7 @@ def parse_playset(file):
             # got a main level category
             cat = m.group(1).lower()
             if not cat in CATEGORIES:
-                print "invalid category detected: " + cat
+                print ("invalid category detected: " + cat)
                 sys.exit(1)
             playset_dict[cat] = []
         else:

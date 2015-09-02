@@ -5,14 +5,15 @@ loading and writing Player to database
 class Player:
     """ This class describes a player in the fiasco game
     """
-    def __init__(self, id_num, name, p_left_id, p_right_id,
-                 rel_l_id, rel_l_role, rel_l_sub1, rel_l_sub2,
-                 rel_r_id, rel_r_role, rel_r_sub1, rel_r_sub2,
-                 game_id):
+
+    def __init__(self, id_num=None, name=None, p_left_name=None, p_right_name=None,
+                 rel_l_id=None, rel_l_role=None, rel_l_sub1=None, rel_l_sub2=None,
+                 rel_r_id=None, rel_r_role=None, rel_r_sub1=None, rel_r_sub2=None,
+                 game_id=None):
         self.id_num=id_num
         self.name=name
-        self.p_left_id=p_left_id
-        self.p_right_id=p_right_id
+        self.p_left_name=p_left_name
+        self.p_right_name=p_right_name
         self.rel_l_id   = rel_l_id
         self.rel_l_role = rel_l_role
         self.rel_l_sub1 = rel_l_sub1
@@ -29,44 +30,107 @@ class Player:
         else:
             return False
 
-def get_players_from_db(game_id, db):
-    """ 
-    input: game_id: String
-    returns: Player
+def get_player_names_from_db(game_id, db):
+    """ input: String game_id, database db
+    returns: list of strings of names
     """
-    cur = db.cursor()
-    db_result = cur.execute("SELECT * from player where game_id = ?", game_id)
+    return list(map(lambda x: x.name, get_players_from_db(game_id, db)))
+        
+def get_players_from_db_result(db_result):
+    """ input: result of cur.execute("SELECT * from player")
+    returns: list of Player objects
+    """
+    args_dict = {}
+    cols = _list_columns_from_results(db_result)
     results = db_result.fetchall()
     players = []
     for result in results:
-        players.append(Player (id_num=result[0],
-                               name=result[1],
-                               p_left_id=result[2],
-                               p_right_id=result[3],
-                               rel_l_id   = result[4],
-                               rel_l_role = result[5],
-                               rel_l_sub1 = result[6],
-                               rel_l_sub2 = result[7],
-                               rel_r_id   = result[8],
-                               rel_r_role = result[9],
-                               rel_r_sub1 = result[10],
-                               rel_r_sub2 = result[11],
-                               game_id    = result[12]))
+        for i, val in enumerate(result):
+            args_dict[cols[i]] = val
+        players.append(Player(**args_dict))
     return players
+        
+def get_player_from_db_by_name(name, game_id, db):
+    """ input: name: String, game_id: String, db: Database
+    returns: Player object that matches name
+    """
+    cur = db.cursor()
+    db_result = cur.execute("SELECT * from player where game_id = ? and name = ?",
+                            [game_id, name])
+    players = get_players_from_db_result(db_result)
+    if len(players) == 0:
+        return None
+    return players[0]
+        
+def get_players_from_db(game_id, db):
+    """ input: game_id: String
+    returns: list of Player objects
+    """
+    cur = db.cursor()
+    db_result = cur.execute("SELECT * from player where game_id = ?", game_id)
+
+    return get_players_from_db_result(db_result)
 
 def insert_player_into_db(player, db):
     """ Inserts player into database
     """
     cur = db.cursor()
-    cur.execute(
-        "INSERT INTO player (id_num, name, p_left_id, p_right_id, "
-        "rel_l_id, rel_l_role, rel_l_sub1, rel_l_sub2, "
-        "rel_r_id, rel_r_role, rel_r_sub1, rel_r_sub2, "
-        "game_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        [player.id_num, player.name, player.p_left_id, player.p_right_id,
-         player.rel_l_id, player.rel_l_role, player.rel_l_sub1, player.rel_l_sub2,
-         player.rel_r_id, player.rel_r_role, player.rel_r_sub1, player.rel_r_sub2,
-         player.game_id])
+    attr_list = ','.join(_list_player_attributes())
+    val_list = ','.join(list(len(_list_player_attributes()) * '?'))
+    cur.execute("INSERT INTO player(" + attr_list + ") VALUES (" + val_list + ")",
+                _get_player_vals(player))
     db.commit()
 
-    
+def update_player_by_name(player, db):
+    """ Searches for the player object's name, and updates all
+    attributes for that player
+    """
+    cur = db.cursor()
+    attr_list = _list_player_attributes()
+    val_list = _get_player_vals(player)
+    assert(len(attr_list) == len(val_list))
+    set_statement_list = []
+    for i in range(0,len(val_list)):
+        set_statement_list.append(attr_list[i] + '=?')
+    set_statement = ','.join(set_statement_list)
+    val_list.append(player.name)
+    cur.execute("UPDATE player SET " + set_statement + " WHERE name=?",
+                val_list)
+    db.commit()
+
+def clear_players(game_id, db):
+    """ input: String game_id
+    """
+    cur = db.cursor()
+    cur.execute("delete from player where game_id=?", (game_id,))
+    db.commit()
+
+def remove_player(name,game_id, db):
+    cur = db.cursor()
+    cur.execute("delete from player where name=? and game_id=?", (name,game_id))
+    db.commit()
+
+#def _get_player_by_id (id_num, players):
+#    for p in players:
+#        if p.id_num == id_num:
+#            return p
+            
+def _list_player_attributes():
+    """ returns: sorted list of Player attributes
+    """
+    return sorted(Player().__dict__.keys())
+
+def _get_player_vals(player_obj):
+    """ input: Player object
+    returns: list of values for the class. Order is sorted by variable name
+    """
+    vals = []
+    for attr in sorted(Player().__dict__.keys()):
+        vals.append(getattr(player_obj, attr))
+    return vals
+
+def _list_columns_from_results(result):
+    """ input: result of cur.execute()
+    returns: list of strings containing column names for the result
+    """
+    return list(map(lambda x: x[0], result.description))
