@@ -7,22 +7,20 @@ class Player:
     """
 
     def __init__(self, id_num=None, name=None, p_left_name=None, p_right_name=None,
-                 rel_l_id=None, rel_l_role=None, rel_l_sub1=None, rel_l_sub2=None,
-                 rel_r_id=None, rel_r_role=None, rel_r_sub1=None, rel_r_sub2=None,
+                 rel_l_id=None, rel_l_role=None, rel_l_option=None,
+                 rel_r_id=None, rel_r_role=None, rel_r_option=None,
                  game_id=None):
-        self.id_num=id_num
-        self.name=name
-        self.p_left_name=p_left_name
-        self.p_right_name=p_right_name
-        self.rel_l_id   = rel_l_id
-        self.rel_l_role = rel_l_role
-        self.rel_l_sub1 = rel_l_sub1
-        self.rel_l_sub2 = rel_l_sub2
-        self.rel_r_id   = rel_r_id
-        self.rel_r_role = rel_r_role
-        self.rel_r_sub1 = rel_r_sub1
-        self.rel_r_sub2 = rel_r_sub2
-        self.game_id    = game_id
+        self.id_num       = id_num
+        self.name         = name
+        self.p_left_name  = p_left_name
+        self.p_right_name = p_right_name
+        self.rel_l_id     = rel_l_id
+        self.rel_l_role   = rel_l_role
+        self.rel_l_option = rel_l_option
+        self.rel_r_id     = rel_r_id
+        self.rel_r_role   = rel_r_role
+        self.rel_r_option = rel_r_option
+        self.game_id      = game_id      
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -36,7 +34,7 @@ def get_player_names_from_db(game_id, db):
     """
     return list(map(lambda x: x.name, get_players_from_db(game_id, db)))
         
-def get_players_from_db_result(db_result):
+def _get_players_from_db_result(db_result):
     """ input: result of cur.execute("SELECT * from player")
     returns: list of Player objects
     """
@@ -57,7 +55,7 @@ def get_player_from_db_by_name(name, game_id, db):
     cur = db.cursor()
     db_result = cur.execute("SELECT * from player where game_id = ? and name = ?",
                             [game_id, name])
-    players = get_players_from_db_result(db_result)
+    players = _get_players_from_db_result(db_result)
     if len(players) == 0:
         return None
     return players[0]
@@ -68,8 +66,7 @@ def get_players_from_db(game_id, db):
     """
     cur = db.cursor()
     db_result = cur.execute("SELECT * from player where game_id = ?", game_id)
-
-    return get_players_from_db_result(db_result)
+    return _get_players_from_db_result(db_result)
 
 def insert_player_into_db(player, db):
     """ Inserts player into database
@@ -93,8 +90,9 @@ def update_player_by_name(player, db):
     for i in range(0,len(val_list)):
         set_statement_list.append(attr_list[i] + '=?')
     set_statement = ','.join(set_statement_list)
+    val_list.append(player.game_id)
     val_list.append(player.name)
-    cur.execute("UPDATE player SET " + set_statement + " WHERE name=?",
+    cur.execute("UPDATE player SET " + set_statement + " WHERE game_id=? and name=?",
                 val_list)
     db.commit()
 

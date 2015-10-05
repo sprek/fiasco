@@ -46,20 +46,17 @@
   5.1 corrupt official / local big shot
   5.2 gambler / bookie
   5.3 thief / thief
-    5.3a.1 shoplifter
-    5.3a.2 burglar
-    5.3a.3 car thief
-    5.3b.1 shoplifter
-    5.3b.2 burglar
-    5.3b.3 car thief
+    5.3a.1s shoplifter
+    5.3a.2s burglar
+    5.3a.3s car thief
+    5.3b.1s shoplifter
+    5.3b.2s burglar
+    5.3b.3s car thief
   5.4 con artist / mark
   5.5 hoodlum / hoodlum
-    5.5a.1 racketeer
-    5.5a.2 knucklehead
-    5.5a.3 delinquent
-    5.5b.1 racketeer
-    5.5b.2 knucklehead
-    5.5b.3 delinquent
+    5.5a.1s racketeer
+    5.5a.2s knucklehead
+    5.5a.3s delinquent
   5.6 drug person / drug person
     5.6a.1 dealer
     5.6a.2 manufacturer
@@ -93,12 +90,6 @@
   6.6a.4s poker club
   6.6a.5s book club
   6.6a.6s mahjong club
-  6.6b.1s crime watch
-  6.6b.2s garden club
-  6.6b.3s knitting club
-  6.6b.4s poker club
-  6.6b.5s book club
-  6.6b.6s mahjong club
   
 @ Needs
 1 To get out

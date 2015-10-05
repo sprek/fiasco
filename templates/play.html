@@ -13,96 +13,130 @@
 {{ super() }}
 <script type=text/javascript>
 
-  $(document).ready(function () {
-    var interval = 5000;   //number of mili seconds between each call
-    var refresh = function() {
-        $.ajax({
-            url: "/get_setup_status",
-            cache: false,
-            success: function(data) {
-                $("#diceFooter").html(data["dice_html"])
-                setTimeout(function() {
-                    refresh();
-                }, interval);
-            }
-        });
-    };
-  refresh();
-  
-// playset buttons added dynamically
-//$(document).on('click', '.p_rel_item', function(e) {
-//  alert ($(this).attr('data'));
-  //  });
+ $(document).ready(function () {
+     var interval = 5000;   //number of mili seconds between each call
+     var refresh = function() {
+         $.ajax({
+             url: "/get_setup_status",
+             cache: false,
+             success: function(data) {
+                 $("#diceFooter").html(data["dice_html"])
+                     setTimeout(function() {
+                         refresh();
+                     }, interval);
+             }
+         });
+     };
+     refresh();
 
-  
-  
-});
+     $(document).on('click', '.radio_rel', function() {
+         $("#modal_g1").html($(this).parent().find(".g1_text").text());
+         $("#modal_g2").html($(this).parent().find(".g2_text").text());
+         $("#modal_g1_option").html($(this).parent().find(".rel_select1").clone());
+         $("#modal_g2_option").html($(this).parent().find(".rel_select2").clone());
+         $("#modal_g1_option").find(".rel_select1").val($(this).parent().find(".rel_select1").val());
+         $("#modal_g2_option").find(".rel_select2").val($(this).parent().find(".rel_select2").val());
+         $("#myModal").modal("show");
+     });
+
+     $("#relSubmit").submit(function(e) {
+         e.preventDefault();
+         $.post("setrelationship", {"rel1_name"   : $("#modal_g1").text(),
+                                    "rel1_option" : $("#modal_g1_option").val(),
+                                    "rel1_player" : $("#modal_g1_player"),
+                                    "rel2_name"   : $("#modal_g2").text(),
+                                    "rel2_option" : $("#modal_g2_option").val(),
+                                    "rel2_player" : $("#modal_g2_player")});
+     });
+
+     $(".player_check").change(function() {
+         // enable the elements here
+         if ($(this).parent().parent().find(".player_check1").prop("checked") ||
+             $(this).parent().parent().find(".player_check2").prop("checked")) {
+             toggleCategory(true, $(this).attr('entry_id'))
+         } else {
+             toggleCategory(false, $(this).attr('entry_id'))
+         }
+     });
+
+     function toggleCategory (enabled, entry_id) {
+         if (enabled) {
+             $("#" + entry_id).find(".p_rel_item").removeClass("disabled")
+             $("#" + entry_id).find(".radio_rel").removeAttr("disabled")
+         } else {
+             if (false == $("#" + entry_id).find(".class").hasClass("disabled")) {
+                 $("#" + entry_id).find(".p_rel_item").addClass("disabled")
+                 $("#" + entry_id).find(".radio_rel").addAttr("disabled")
+             }
+         }
+     }
+     
+ });
 </script>
 {% endblock %}
 
 {% block content %}
 <div class="container main_body">
-  <h1>Playset: {{ playset_name }}</h1>
-  <p>Playing as {{ player }}. <a href="/changeplayer">Change Player</a></p>
+    <h1>Playset: {{ playset_name }}</h1>
+    <p>Playing as {{ player }}. <a href="/changeplayer">Change Player</a></p>
 
-  <div id="playsetList">
-    {{ playset_html|safe }}
-  </div>
+    <div id="playsetList">
+        {{ playset_html|safe }}
+    </div>
 
-  <form action="endgame">
-    <button type="submit" class="btn btn-default" id="endBtn">End Game</button>
-  </form>
+    <form action="endgame">
+        <button type="submit" class="btn btn-default" id="endBtn">End Game</button>
+    </form>
   </br>
 </div><!-- /container -->
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Relationship Select</h4>
-      </div>
-      <div class="modal-body">
-        <form role="form">
-          <fieldset>
-            <div class="form-group">
-              <h3 id="modal_g1"></h3>
-              <label class="control-label">Player:</label>
-                <select class="form-control">
-                  <option value="1">Daniel (yourself)</option>
-                  <option value="2">asdf</option>
-                  <option value="3">blah</option>
-                </select>
-                <br/>
-                <h3 id="modal_g2"></h3>
-              <label class="control-label">Player:</label>
-                <select class="form-control">
-                  <option value="1">Daniel (yourself)</option>
-                  <option value="2">asdf</option>
-                  <option value="3">blah</option>
-                </select>
-                <br/>
-              <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Relationship Select</h4>
             </div>
-          </fieldset>
-          </form>
-      </div>
-      <div class="modal-footer">
+            <div class="modal-body">
+                <form role="form">
+                    <fieldset>
+                        <div class="form-group">
+                            <h3><span id="modal_g1"></span>&nbsp;&nbsp;&nbsp;<span id="modal_g1_option"></span> </h3>
+                            <label class="control-label">Player:</label>
+                            <select id="modal_g1_player" class="form-control">
+                                <option value="1">{{ player }} (Yourself)</option>
+                                <option value="2">{{ neighbors[0] }}</option>
+                                <option value="3">{{ neighbors[1] }}</option>
+                            </select>
+                            <br/>
+                            <h3><span id="modal_g2"></span>&nbsp;&nbsp;&nbsp;<span id="modal_g2_option"></span> </h3>
+                            <label class="control-label">Player:</label>
+                            <select id="modal_g2_player" class="form-control">
+                                <option value="1">{{ player }} (Yourself)</option>
+                                <option value="2">{{ neighbors[0] }}</option>
+                                <option value="3">{{ neighbors[1] }}</option>
+                            </select>
+                            <br/>
+                            <button id="relSubmit" type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
 
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
     </div>
-
-  </div>
 </div>
 
 
 
-  <div id="diceFooter">
+<div id="diceFooter">
     {{ dice_html|safe }}
-  </div><!-- /footer -->
+</div><!-- /footer -->
 
 {% endblock %}

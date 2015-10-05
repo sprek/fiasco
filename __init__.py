@@ -5,21 +5,11 @@ from cgi import escape
 import sqlite3
 import json
 from random import randint
-import player, dice, game_control, view, create_db, playset
+import player, dice, game_control, view, create_db, playset, status
 import os.path
 
 DATABASE = 'fiasco.db'
 GAME_ID = "0"
-
-#def get_players(game_id):
-#    cur = get_db().cursor()
-#    db_result = cur.execute("SELECT name from player where game_id = ?", game_id)
-#    results = db_result.fetchall()
-#    players = []
-#    for name in results:
-#        if len(name) > 0:
-#            players.append(name[0])
-#    return players
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -30,58 +20,13 @@ def get_db():
             create_db.create_db(DATABASE)
     return db
 
-#def get_num_players(game_id):
-#    return len(get_players(game_id))
-#
-#def get_dice(num_players):
-#    dice = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
-#    for i in range(0,num_players*4):
-#        r = randint(1,6)
-#        dice[r] = dice[r] + 1
-#    return dice
-
-#def get_dice_from_db(game_id):
-#    dice = {}
-#    db = get_db()
-#    cur = db.cursor()
-#    db_result = cur.execute("SELECT * from dice where game_id=?", GAME_ID)
-#    if len(db_result.fetchall()) > 0:
-#        db_result = cur.execute ("SELECT d1,d2,d3,d4,d5,d6 from dice where game_id=?", GAME_ID)
-#        results = db_result.fetchall()
-#        if len(results) > 0:
-#            print "RESULTS: " + str(results[0])
-#            for i in range (0, len(results[0])):
-#                dice[i+1] = results[0][i]
-#        else:
-#            print "ERROR NO RESULTS"
-#    else:
-#        print "SETTING DICE"
-#        dice = get_dice(get_num_players())
-#        cur.execute("INSERT INTO dice (d1,d2,d3,d4,d5,d6,game_id) VALUES (?,?,?,?,?,?,?)", \
-#                    (dice[1],  dice[2], dice[3], dice[4], dice[5], dice[6], GAME_ID,))
-#        db.commit()
-#    return dice
-
-#def initialize_game(game_id):
-#    players = get_players(game_id)
-#    rand_ids = random.shuffle(players)
-#    db = get_db()
-#    cur = db.cursor()
-#    for i, player in enumerate(players):
-#        pleft = get_left_id(i)
-#        pright = get_right_id(i)
-#        cur.execute("UPDATE player SET id=?, p_left_id=?, p_right_id=? where game_id=? and name=?",
-#                    i, pleft, pright, game_id, player)
-#        db.commit()
-#    cur.execute("UPDATE status SET round=? where game_id=?", 0, game_id)
-#    db.commit()
 
 #def get_playset_meta_html():
 #
-#    
+#
 #    return json.dumps({'data' : 'asdf'})
 
-def create_app(configfile=None):
+def create_app():
     app = Flask(__name__)
     Bootstrap(app)
     app.extensions['bootstrap']['cdns']['jquery'] = StaticCDN()
@@ -98,25 +43,25 @@ def create_app(configfile=None):
 
     @app.route('/play', methods=('POST', 'GET'))
     def play():
-        db = get_db()
-        cur_player = request.args.get('player', '')
-        players = player.get_players_from_db(GAME_ID, db)
-        player_names = list(map(lambda x: x.name, players))
-        if cur_player:
-            if cur_player in players:
-                session['player'] = cur_player
-        if not 'player' in session or len(session['player']) == 0:
-            return render_template('select_player.html', players=player_names)
+        player_names = player.get_player_names_from_db(GAME_ID, get_db())
+        cur_player_name = game_control.player_name_check(request.args.get('player',''),
+                                                         session['player'],
+                                                         player_names)
+        if cur_player_name:
+            session['player'] = cur_player_name
         else:
-            #pd = parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
-            #dice = get_dice_from_db(GAME_ID)
+            return render_template('select_player.html', players=player_names)
+        
+        if status.get_round_from_db(GAME_ID, get_db()) == -1:
             game_control.initialize_game(GAME_ID, get_db())
-            pd = playset.parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
-            return render_template('play.html',
-                                   player=session['player'],
-                                   playset_name='Main St.',
-                                   dice_html=view.get_dice_html(dice.get_dice_from_db(GAME_ID, get_db()).dice),
-                                   playset_html = view.get_playset_html(pd))
+        cur_player = player.get_player_from_db_by_name(cur_player_name, GAME_ID, get_db())
+        pd = playset.parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
+        return render_template('play.html',
+                               player=session['player'],
+                               playset_name='Main St.',
+                               dice_html=view.get_dice_html(dice.get_dice_from_db(GAME_ID, get_db()).dice),
+                               neighbors=[cur_player.p_left_name, cur_player.p_right_name],
+                               playset_html = view.get_playset_html(pd, get_db(), cur_player_name, GAME_ID))
 
     @app.route('/endgame', methods=('POST', 'GET'))
     def endgame():
@@ -130,9 +75,8 @@ def create_app(configfile=None):
         
     @app.route('/clearplayers', methods=('POST', 'GET'))
     def clearplayers():
-        cur = get_db().cursor()
-        cur.execute("delete from player")
-        db.commit()
+        #player.clear_players(GAME_ID, get_db())
+        create_db.create_db()
         return ''
     
     @app.route('/removeplayer', methods=('POST', 'GET'))
@@ -143,20 +87,28 @@ def create_app(configfile=None):
     @app.route('/playerlist', methods=('POST', 'GET'))
     def playerlist():
         player_names = player.get_player_names_from_db(GAME_ID, get_db())
-        #print ("PLAYER NAMES IN PLAYERLIST: " + str(player_names))
-        #result_str = ''
-        #if (session['player'] in player_names):
-        #    player_names.remove(session['player'])
         result_str = view.get_player_list_html(player_names)
-        #else:
-        #    session['player'] = ''
         return result_str
+
+    @app.route('/setrelationship', methods=('POST', 'GET'))
+    def setrelationship():
+        pd = playset.parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
+        result = game_control.set_relationship(request.form['rel1_name'],
+                                               request.form['rel1_option'],
+                                               request.form['rel1_player'],
+                                               request.form['rel2_name'],
+                                               request.form['rel2_option'],
+                                               request.form['rel2_player'],
+                                               session['player'],
+                                               pd,
+                                               GAME_ID,
+                                               get_db())
+        return ''
 
     @app.route('/playerjoin', methods=('POST', 'GET'))
     def playerjoin():
         name = request.form['data']
         if not name in player.get_players_from_db(GAME_ID, get_db()):
-            print ("INSERTING PLAYER: " + name)
             player.insert_player_into_db(player.Player(name=name, game_id=GAME_ID), db=get_db())
         session['player'] = name
         return ''

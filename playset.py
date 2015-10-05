@@ -94,6 +94,53 @@ def parse_playset(file):
     pf.close()
     return playset
 
+def get_relationship_indices(rel_name_a, rel_name_b, rel_a_option, rel_b_option, playset):
+    """
+    input: relationship name, playset
+    returns: if found: (int index of relationship category,
+                        int index of relationship,
+                        int index of rel option a (or -1 for none),
+                        int index of rel option b (or -1 for none),
+                        string flag)
+             if not found: None
+    """
+    for i, rel in enumerate(playset.relationships):
+        for j, entry in enumerate(rel.entries):
+            if rel_name_a == entry.rel_a and rel_name_b == entry.rel_b:
+                rel_a_index = -1
+                rel_b_index = -1
+                if rel_a_option:
+                    for k, opt in enumerate(entry.rel_a_options):
+                        if opt == rel_a_option:
+                            rel_a_index = k
+                    if rel_a_index == -1:
+                        # rel_a_option was set, but not found in the playset
+                        return None
+                if rel_b_option:
+                    for k, opt in enumerate(entry.rel_b_options):
+                        if opt == rel_b_option:
+                            rel_b_index = k
+                    if rel_b_index == -1:
+                        # rel_b_option was set, but not found in the playset
+                        return None        
+                return (i,j,rel_a_index,rel_b_index, entry.flag)
+    return None
+
+def get_relationship_id_from_indices(indices, flip_a_b):
+    """
+    input: indices - tuples where indices[0] is the relationship category index,
+                                  indices[1] is the relationship pair index,
+                                  indices[2] is the relationship option a index,
+                                  indices[3] is the relationship option b index,
+                                  indices[4] is the relationship flags
+           flip_a_b - True if the a and b relationship indices should be swapped
+    returns: a string of the indices joined on '.'
+    """
+    new_indices = indices
+    if flip_a_b:
+        new_indices = (indices[0], indices[1], indices[3], indices[2], indices[4])
+    return '.'.join(list(map(str, new_indices)))
+
 if __name__ == '__main__':
     main_playset = parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')
     print("PLAYSET NAME: " + main_playset.name)
