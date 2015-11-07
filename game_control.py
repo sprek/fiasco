@@ -67,8 +67,8 @@ def set_relationship(rel1_role, rel1_option, rel1_player,
         return ERROR_INVALID_RELATIONSHIP_VALUES
 
     # check if dice are ok
-    dice = dice.get_dice_from_db(game_id, db)
-    if dice.dice[rel_indices[1]+1] <= 0:
+    game_dice = dice.get_dice_from_db(game_id, db)
+    if game_dice.dice[rel_indices[1]+1] <= 0:
         return ERROR_NOT_ENOUGH_DICE
     p1 = player.get_player_from_db_by_name(rel1_player, game_id, db)
     p2 = player.get_player_from_db_by_name(rel2_player, game_id, db)
@@ -98,6 +98,16 @@ def set_relationship(rel1_role, rel1_option, rel1_player,
     player.update_player_by_name(p2, db)
     return NO_ERROR
 
+def enable_category(name, enabled, cur_player, game_id, db):
+    """ input: target name: string
+               enabled: boolean
+               cur_player: string
+    """
+    cur_status = status.get_status_from_db(game_id, db)
+    rel_table = status.get_table_from_rel_table(cur_status.player_rel_table)
+    #if rel_table == 
+    
+
 def close_game(game_id, db):
     player.clear_players(game_id, db)
     dice.clear_dice(game_id, db)
@@ -112,3 +122,4 @@ def _get_right_item(players, cur_index):
     """ returns the next item in the players list (loops back to end if negative)
     """
     return players[(cur_index+1) % len(players)]
+

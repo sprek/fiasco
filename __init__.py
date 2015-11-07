@@ -90,6 +90,14 @@ def create_app():
         result_str = view.get_player_list_html(player_names)
         return result_str
 
+    @app.route('/enablecategory', methods=('POST', 'GET'))
+    def enablecategory():
+        name = request.form['player']
+        enabled = request.form['enabled']
+        cur_player = session['player']
+        game_control.enable_category(name, enabled, cur_player)
+        return ''
+
     @app.route('/setrelationship', methods=('POST', 'GET'))
     def setrelationship():
         pd = playset.parse_playset('/Users/danielsprechman/development/projects/fiasco/playset_main_st.txt')

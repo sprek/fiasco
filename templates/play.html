@@ -53,10 +53,12 @@
          // enable the elements here
          if ($(this).parent().parent().find(".player_check1").prop("checked") ||
              $(this).parent().parent().find(".player_check2").prop("checked")) {
-             toggleCategory(true, $(this).attr('entry_id'))
+                 toggleCategory(true, $(this).attr('entry_id'))
          } else {
              toggleCategory(false, $(this).attr('entry_id'))
          }
+         $.post("enablecategory", {"player"  : $(this).attr('value'),
+                                   "enabled"   : this.checked});
      });
 
      function toggleCategory (enabled, entry_id) {

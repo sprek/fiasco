@@ -15,7 +15,7 @@ def create_db(filename='fiasco.db'):
                     "rel_r_id TEXT, rel_r_role TEXT, rel_r_option TEXT, "
                     "game_id TEXT)")
         cur.execute("CREATE TABLE dice (d1 INT, d2 INT, d3 INT, d4 INT, d5 INT, d6 INT, game_id TEXT)")
-        cur.execute("CREATE TABLE status (round_num INT, game_id TEXT)")
+        cur.execute("CREATE TABLE status (round_num INT, game_id TEXT, player_rel_table TEXT)")
         
         
         #cur.execute("CREATE TABLE player (id INT, p_left_id INT, p_right_id INT, rel_l TEXT, rel_r TEXT, game_id TEXT)")

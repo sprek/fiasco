@@ -170,6 +170,10 @@ class FiascoTestCase(unittest.TestCase):
         assert(not p3.p_left_name == p3.p_right_name)
 
         # try setting relationships
+
+        # first prepare the dice, so that there's enough for all the tests
+        dice.insert_dice_into_db(dice.Dice({0:100,1:100,2:100,3:100,4:100,5:100,6:100},p1.game_id), self.db)
+        
         test_playset = playset.parse_playset(TEST_PLAYSET)
         # p1 and p2: mayor / health commissioner
         # p1 and p3: drug dealer / drug manufacturer
@@ -229,9 +233,27 @@ class FiascoTestCase(unittest.TestCase):
         """
         clear_tables(self.db)
         assert(status.get_round_from_db(GAME_ID1, self.db) == -1)
+        status.initialize_status(GAME_ID1, self.db, 3)
+        assert(status.get_round_from_db(GAME_ID1, self.db) == 0)
         status.set_round_in_db(5, GAME_ID1, self.db)
         assert(status.get_round_from_db(GAME_ID1, self.db) == 5)
-
+        status.initialize_status(GAME_ID1, self.db, 3)
+        assert(status.get_round_from_db(GAME_ID1, self.db) == 0)
+        table_str = status.create_player_rel_table(5)
+        assert (len(table_str) == 74)
+        table = status.get_table_from_rel_table(table_str)
+        assert (len(table) == 5)
+        assert (len(table[0]) == 5)
+        tmp_table_str = status.get_rel_table_from_table(table)
+        assert (tmp_table_str == table_str)
+        tmp_table = status.get_table_from_rel_table(table_str)
+        assert (tmp_table == table)
+        new_table = status.update_player_rel_table(table_str, 1,2,5)
+        status.set_player_rel_table_in_db(GAME_ID1, new_table, self.db)
+        new_status = status.get_status_from_db(GAME_ID1, self.db)
+        assert(status.get_table_from_rel_table(new_status.player_rel_table)[1][2] == '5')
+        
+        
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
