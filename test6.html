@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="static/css/play.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+
+    <div class="container main_body">
+      <h1 id="test">Playset: Main St.</h1>
+      <p>Playing as daniel. <a href="/changeplayer">Change Player</a></p>
+
+      <div id="playsetList">
+        <h2 id="test2">Relationships</h2>
+
+        <div class="row">
+          <div class="col-md-4">
+            <h3>1. family</h3>
+          </div>
+          <div class="col-md-4 well-lg">
+            <form class="form-inline">
+              Enable for:&nbsp;&nbsp;&nbsp;
+              <label class="checkbox"><input type="checkbox"> Daniel</input></label>&nbsp;&nbsp;&nbsp;
+              <label type="checkbox"><input type="checkbox"> Fred</input></label>
+            </form>
+          </div>
+        </div>
+
+        <ul class="list-group"><li class="p_rel_item list-group-item disabled"><input type="radio" id="radio_rel_1e0" class="radio_rel">&nbsp;&nbsp;&nbsp;1. <span class="g1_text">parent-in-law</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">son or daughter-in-law</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_1e1" class="radio_rel">&nbsp;&nbsp;&nbsp;2. <span class="g1_text">cousin</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">cousin</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_1e2" class="radio_rel">&nbsp;&nbsp;&nbsp;3. <span class="g1_text">sibling</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">sibling</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_1e3" class="radio_rel">&nbsp;&nbsp;&nbsp;4. <span class="g1_text">parent</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">child or stepchild</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_1e4" class="radio_rel">&nbsp;&nbsp;&nbsp;5. <span class="g1_text">grandparent</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">grandchild</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_1e5" class="radio_rel">&nbsp;&nbsp;&nbsp;6. <span class="g1_text">distant relative</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">distant relative</span></li></ul>
+
+        <h3>2. work</h3>
+
+        <ul class="list-group"><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_2e0" class="radio_rel">&nbsp;&nbsp;&nbsp;1. <span class="g1_text">former co-worker</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">former co-worker</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_2e1" class="radio_rel">&nbsp;&nbsp;&nbsp;2. <span class="g1_text">current co-worker</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">current co-worker</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_2e2" class="radio_rel">&nbsp;&nbsp;&nbsp;3. <span class="g1_text">supervisor</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">employee</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_2e3" class="radio_rel">&nbsp;&nbsp;&nbsp;4. <span class="g1_text">tradesman</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select1"><option val="rel_2e3_g1_o0">mechanic</option><option val="rel_2e3_g1_o1">plumber</option><option val="rel_2e3_g1_o2">decorator</option><option val="rel_2e3_g1_o3">landscaper</option></select>)&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">client</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_2e4" class="radio_rel">&nbsp;&nbsp;&nbsp;5. <span class="g1_text">salesman</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">customer</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_2e5" class="radio_rel">&nbsp;&nbsp;&nbsp;6. <span class="g1_text">professional</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select1"><option val="rel_2e5_g1_o0">pastor</option><option val="rel_2e5_g1_o1">doctor</option><option val="rel_2e5_g1_o2">lawyer</option><option val="rel_2e5_g1_o3">dentist</option><option val="rel_2e5_g1_o4">drug dealer</option></select>)&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">client</span></li></ul>
+
+        <h3>3. friendship</h3>
+
+        <ul class="list-group"><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_3e0" class="radio_rel">&nbsp;&nbsp;&nbsp;1. <span class="g1_text">manipulator</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">victim</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_3e1" class="radio_rel">&nbsp;&nbsp;&nbsp;2. <span class="g1_text">old buddy</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">old buddy</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_3e2" class="radio_rel">&nbsp;&nbsp;&nbsp;3. <span class="g1_text">drug friend</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">drug friend</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_3e3" class="radio_rel">&nbsp;&nbsp;&nbsp;4. <span class="g1_text">friendly rival</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">friendly rival</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_3e4" class="radio_rel">&nbsp;&nbsp;&nbsp;5. <span class="g1_text">friends with benfits</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">friends with benefits</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_3e5" class="radio_rel">&nbsp;&nbsp;&nbsp;6. <span class="g1_text">bitter social adversaries</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">bitter social adversaries</span></li></ul>
+
+        <h3>4. romance</h3>
+
+        <ul class="list-group"><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_4e0" class="radio_rel">&nbsp;&nbsp;&nbsp;1. <span class="g1_text">former spouse</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">former spouse</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_4e1" class="radio_rel">&nbsp;&nbsp;&nbsp;2. <span class="g1_text">current spouse</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">current spouse</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_4e2" class="radio_rel">&nbsp;&nbsp;&nbsp;3. <span class="g1_text">life-long crush</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">object of crush</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_4e3" class="radio_rel">&nbsp;&nbsp;&nbsp;4. <span class="g1_text">one-time fling</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">one-time fling</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_4e4" class="radio_rel">&nbsp;&nbsp;&nbsp;5. <span class="g1_text">lover</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">lover</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_4e5" class="radio_rel">&nbsp;&nbsp;&nbsp;6. <span class="g1_text">former lover</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">former lover</span></li></ul>
+
+        <h3>5. crime</h3>
+
+        <ul class="list-group"><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_5e0" class="radio_rel">&nbsp;&nbsp;&nbsp;1. <span class="g1_text">corrupt official</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">local big shot</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_5e1" class="radio_rel">&nbsp;&nbsp;&nbsp;2. <span class="g1_text">gambler</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">bookie</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_5e2" class="radio_rel">&nbsp;&nbsp;&nbsp;3. <span class="g1_text">thief</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select1"><option val="rel_5e2_g1_o0">shoplifter</option><option val="rel_5e2_g1_o1">burglar</option><option val="rel_5e2_g1_o2">car thief</option></select>)&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">thief</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select2"><option val="rel_5e2_g2_o2">shoplifter</option><option val="rel_5e2_g2_o2">burglar</option><option val="rel_5e2_g2_o2">car thief</option></select>)</li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_5e3" class="radio_rel">&nbsp;&nbsp;&nbsp;4. <span class="g1_text">con artist</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">mark</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_5e4" class="radio_rel">&nbsp;&nbsp;&nbsp;5. <span class="g1_text">hoodlum</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select1"><option val="rel_5e4_g1_o0">racketeer</option><option val="rel_5e4_g1_o1">knucklehead</option><option val="rel_5e4_g1_o2">delinquent</option></select>)&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">hoodlum</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_5e5" class="radio_rel">&nbsp;&nbsp;&nbsp;6. <span class="g1_text">drug person</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select1"><option val="rel_5e5_g1_o0">dealer</option><option val="rel_5e5_g1_o1">manufacturer</option><option val="rel_5e5_g1_o2">distributor</option></select>)&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">drug person</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select2"><option val="rel_5e5_g2_o5">dealer</option><option val="rel_5e5_g2_o5">manufacturer</option><option val="rel_5e5_g2_o5">distributor</option></select>)</li></ul>
+
+        <h3>6. community</h3>
+
+        <ul class="list-group"><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_6e0" class="radio_rel">&nbsp;&nbsp;&nbsp;1. <span class="g1_text">elected official</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select1"><option val="rel_6e0_g1_o0">mayor</option><option val="rel_6e0_g1_o1">health commissioner</option><option val="rel_6e0_g1_o2">transportation commissioner</option><option val="rel_6e0_g1_o3">environmental commissioner</option><option val="rel_6e0_g1_o4">agriculture commissioner</option><option val="rel_6e0_g1_o5">education commissioner</option></select>)&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">elected official</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select2"><option val="rel_6e0_g2_o0">mayor</option><option val="rel_6e0_g2_o0">health commissioner</option><option val="rel_6e0_g2_o0">transportation commissioner</option><option val="rel_6e0_g2_o0">environmental commissioner</option><option val="rel_6e0_g2_o0">agriculture commissioner</option><option val="rel_6e0_g2_o0">education commissioner</option></select>)</li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_6e1" class="radio_rel">&nbsp;&nbsp;&nbsp;2. <span class="g1_text">church minister</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">church member</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_6e2" class="radio_rel">&nbsp;&nbsp;&nbsp;3. <span class="g1_text">rec sports league</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">rec sports league</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_6e3" class="radio_rel">&nbsp;&nbsp;&nbsp;4. <span class="g1_text">case worker</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">client</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_6e4" class="radio_rel">&nbsp;&nbsp;&nbsp;5. <span class="g1_text">A A or narcotics anonymous sponsor</span>&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">participant</span></li><li class="p_rel_item list-group-item"><input type="radio" id="radio_rel_6e5" class="radio_rel">&nbsp;&nbsp;&nbsp;6. <span class="g1_text">neighborhood organization</span>&nbsp;&nbsp;(
+            <select class="btn btn-mini rel_select1"><option val="rel_6e5_g1_o0">crime watch</option><option val="rel_6e5_g1_o1">garden club</option><option val="rel_6e5_g1_o2">knitting club</option><option val="rel_6e5_g1_o3">poker club</option><option val="rel_6e5_g1_o4">book club</option><option val="rel_6e5_g1_o5">mahjong club</option></select>)&nbsp;&nbsp; / &nbsp;&nbsp;<span class="g2_text">neighborhood organization</span></li></ul>
+
+      </div>
+
+      <form action="endgame">
+        <button type="submit" class="btn btn-default" id="endBtn">End Game</button>
+      </form>
+        </br>
+    </div><!-- /container -->
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Relationship Select</h4>
+          </div>
+          <div class="modal-body">
+            <form role="form">
+              <fieldset>
+                <div class="form-group">
+                  <h3><span id="modal_g1"></span>&nbsp;&nbsp;&nbsp;<span id="modal_g1_option"></span> </h3>
+                  <label class="control-label">Player:</label>
+                  <select id="modal_g1_player" class="form-control">
+                    <option value="1">daniel (Yourself)</option>
+                    <option value="2">fred</option>
+                    <option value="3">jack</option>
+                  </select>
+                  <br/>
+                  <h3><span id="modal_g2"></span>&nbsp;&nbsp;&nbsp;<span id="modal_g2_option"></span> </h3>
+                  <label class="control-label">Player:</label>
+                  <select id="modal_g2_player" class="form-control">
+                    <option value="1">daniel (Yourself)</option>
+                    <option value="2">fred</option>
+                    <option value="3">jack</option>
+                  </select>
+                  <br/>
+                  <button id="relSubmit" type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+          <div class="modal-footer">
+
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+
+    <div id="diceFooter">
+      <pre><strong>Dice available:</strong>1:<strong><span style='color:#dd0000'>1</span></strong>  2:<strong><span style='color:#00cc00'>3</span></strong>  3:<strong><span style='color:#dd0000'>1</span></strong>  4:<strong><span style='color:#dd0000'>2</span></strong>  5:<strong><span style='color:#dd0000'>2</span></strong>  6:<strong><span style='color:#00cc00'>3</span></strong></pre>
+    </div><!-- /footer -->
+
+
+
+
+
+    <script src="static/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script type=text/javascript>
+      $(document).ready(function () {
+      var interval = 5000;   //number of mili seconds between each call
+      var refresh = function() {
+      $.ajax({
+      url: "/get_setup_status",
+      cache: false,
+      success: function(data) {
+      $("#diceFooter").html(data["dice_html"])
+      setTimeout(function() {
+      refresh();
+      }, interval);
+      }
+      });
+      };
+      refresh();
+
+      $("#test").click(function() {
+      if ($("#radio_rel_1e0").attr('disabled')) {
+      alert("REMOVED");
+      $("#radio_rel_1e0").removeAttr('disabled');
+      } else {
+      alert ("ADDED");
+      $("#radio_rel_1e0").attr('disabled', 'disabled');;
+      }
+      });
+
+      $(document).on('click', '.radio_rel', function() {
+      $("#modal_g1").html($(this).parent().find(".g1_text").text());
+      $("#modal_g2").html($(this).parent().find(".g2_text").text());
+      $("#modal_g1_option").html($(this).parent().find(".rel_select1").clone());
+      $("#modal_g2_option").html($(this).parent().find(".rel_select2").clone());
+      $("#modal_g1_option").find(".rel_select1").val($(this).parent().find(".rel_select1").val());
+      $("#modal_g2_option").find(".rel_select2").val($(this).parent().find(".rel_select2").val());
+      $("#myModal").modal("show");
+      });
+
+      $("#relSubmit").submit(function(e) {
+      e.preventDefault();
+      $.post("setrelationship", {"rel1_name"   : $("#modal_g1").text(),
+      "rel1_option" : $("#modal_g1_option").val(),
+      "rel1_player" : $("#modal_g1_player"),
+      "rel2_name"   : $("#modal_g2").text(),
+      "rel2_option" : $("#modal_g2_option").val(),
+      "rel2_player" : $("#modal_g2_player")});
+      });
+
+      });
+    </script>
+
+  </body>
+</html>
