@@ -55,6 +55,7 @@ class FiascoTestCase(unittest.TestCase):
         self.db = sqlite3.connect(self.db_fd[1])
 
     def tearDown(self):
+        self.db.close()
         os.close(self.db_fd[0])
         os.remove(self.db_fd[1])
 
