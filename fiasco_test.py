@@ -30,7 +30,7 @@ TEST_PLAYSET='/Users/danielsprechman/development/projects/fiasco/playset_main_st
 def clear_tables(db):
     cur = db.cursor()
     cur.execute('DELETE FROM player')
-    cur.execute('DELETE FROM dice')
+    cur.execute('DELETE FROM diceDataModel')
     db.commit()
 
 def print_player_info(player_obj):
@@ -65,7 +65,7 @@ class FiascoTestCase(unittest.TestCase):
         player.get_players_from_db
         player.get_player_from_db_by_name
         player.update_player_by_name
-        """
+        """ 
         clear_tables(self.db)
 
         # test empty players
@@ -121,8 +121,8 @@ class FiascoTestCase(unittest.TestCase):
         num_players = 4
         test_dice = dice.initialize_dice(num_players,'0')
         total = 0
-        for key in test_dice.dice:
-            total += test_dice.dice[key]
+        for key in test_dice.dice_dic:
+            total += test_dice.dice_dic[key]
         assert (total == 4 * num_players)
         # insert dice
         dice.insert_dice_into_db(test_dice, self.db)
@@ -136,7 +136,7 @@ class FiascoTestCase(unittest.TestCase):
         test_player = player.Player (*TEST_PLAYER_VALUES1)
         player.insert_player_into_db(test_player, self.db)
         assert len(player.get_players_from_db(test_player.game_id, self.db)) > 0
-        assert len(dice.get_dice_from_db(test_dice.game_id, self.db).dice) > 0
+        assert len(dice.get_dice_from_db(test_dice.game_id, self.db).dice_dic) > 0
         clear_tables(self.db)
         assert len(player.get_players_from_db(test_player.game_id, self.db)) == 0
         assert dice.get_dice_from_db(test_dice.game_id, self.db) == None
@@ -185,15 +185,18 @@ class FiascoTestCase(unittest.TestCase):
         p3_p1_rel_opt = ('drug person', 'manufacturer')
         p2_p3_rel_opt = ('tradesman', 'plumber')
         p3_p2_rel_opt = ('client', '')
-        game_control.set_relationship(p1_p2_rel_opt[0], p1_p2_rel_opt[1], p1.name,
-                                      p2_p1_rel_opt[0], p2_p1_rel_opt[1], p2.name,
-                                      p1.name, test_playset, p1.game_id, self.db)
-        game_control.set_relationship(p1_p3_rel_opt[0], p1_p3_rel_opt[1], p1.name,
-                                      p3_p1_rel_opt[0], p3_p1_rel_opt[1], p3.name,
-                                      p3.name, test_playset, p1.game_id, self.db)
-        game_control.set_relationship(p2_p3_rel_opt[0], p2_p3_rel_opt[1], p2.name,
-                                      p3_p2_rel_opt[0], p3_p2_rel_opt[1], p3.name,
-                                      p3.name, test_playset, p1.game_id, self.db)
+        retval = game_control.set_relationship(p1_p2_rel_opt[0], p1_p2_rel_opt[1], p1.name,
+                                               p2_p1_rel_opt[0], p2_p1_rel_opt[1], p2.name,
+                                               p1.name, test_playset, p1.game_id, self.db)
+        assert (retval == game_control.NO_ERROR)
+        retval = game_control.set_relationship(p1_p3_rel_opt[0], p1_p3_rel_opt[1], p1.name,
+                                               p3_p1_rel_opt[0], p3_p1_rel_opt[1], p3.name,
+                                               p3.name, test_playset, p1.game_id, self.db)
+        assert (retval == game_control.NO_ERROR)
+        retval = game_control.set_relationship(p2_p3_rel_opt[0], p2_p3_rel_opt[1], p2.name,
+                                               p3_p2_rel_opt[0], p3_p2_rel_opt[1], p3.name,
+                                               p3.name, test_playset, p1.game_id, self.db)
+        assert (retval == game_control.NO_ERROR)
         # get the updated player information
         p1 = player.get_player_from_db_by_name(p1.name, p1.game_id, self.db)
         p2 = player.get_player_from_db_by_name(p2.name, p2.game_id, self.db)

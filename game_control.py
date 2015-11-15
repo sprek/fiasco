@@ -15,6 +15,7 @@ def initialize_game(game_id, db):
     """
     # initialize players
     players = player.get_players_from_db(game_id, db)
+    random.seed(2)
     random.shuffle(players)
     for i, p in enumerate(players):
         p.id_num = i
@@ -68,7 +69,7 @@ def set_relationship(rel1_role, rel1_option, rel1_player,
 
     # check if dice are ok
     game_dice = dice.get_dice_from_db(game_id, db)
-    if game_dice.dice[rel_indices[1]+1] <= 0:
+    if game_dice.dice_dic[rel_indices[1]+1] <= 0:
         return ERROR_NOT_ENOUGH_DICE
     p1 = player.get_player_from_db_by_name(rel1_player, game_id, db)
     p2 = player.get_player_from_db_by_name(rel2_player, game_id, db)

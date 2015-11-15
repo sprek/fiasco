@@ -1,4 +1,5 @@
 from random import randint
+import data_model
 
 class Dice:
     """
@@ -6,8 +7,8 @@ class Dice:
         Key: 1-6
         Value: the quantity of dice with that number
     """
-    def __init__(self, dice, game_id):
-        self.dice = dice
+    def __init__(self, dice_dic, game_id):
+        self.dice_dic = dice_dic
         self.game_id = game_id
 
     def __eq__(self, other):
@@ -16,50 +17,62 @@ class Dice:
         else:
             return False
 
+class DiceDataModel:
+    def __init__(self, d1=0, d2=0, d3=0, d4=0, d5=0, d6=0, game_id=-1):
+        self.d1 = d1
+        self.d2 = d2
+        self.d3 = d3
+        self.d4 = d4
+        self.d5 = d5
+        self.d6 = d6
+        self.game_id = game_id
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+def diceToDiceDataModel(dice):
+    return DiceDataModel(dice.dice_dic[1], dice.dice_dic[2], dice.dice_dic[3], dice.dice_dic[4], dice.dice_dic[5], dice.dice_dic[6], dice.game_id)
+
+def diceDataModelToDice(diceDataModel):
+    dice_dic = { 1:diceDataModel.d1, 2:diceDataModel.d2, 3:diceDataModel.d3, 4:diceDataModel.d4, 5:diceDataModel.d5, 6:diceDataModel.d6 }
+    return Dice(dice_dic, diceDataModel.game_id)
+
 def get_dice_from_db(game_id, db):
-    """ 
+    """
     input: game_id string, database object
     returns: Dice object
     """
-    cur = db.cursor()
-    db_result = cur.execute("SELECT * from dice where game_id=?", game_id)
-    results = db_result.fetchall()
-
-    if len(results) == 0:
+    diceDataModel = data_model.get_object_from_db_by_key(DiceDataModel, "game_id", game_id, db)
+    if not diceDataModel:
         return None
-    
-    dice = {}
-    for i in range (0, len(results[0])-1):
-        dice[i+1] = results[0][i]
-    return Dice(dice, game_id)
+    dice_dic = {}
+    dice_dic[1] = diceDataModel.d1 
+    dice_dic[2] = diceDataModel.d2 
+    dice_dic[3] = diceDataModel.d3 
+    dice_dic[4] = diceDataModel.d4 
+    dice_dic[5] = diceDataModel.d5 
+    dice_dic[6] = diceDataModel.d6
+    return Dice(dice_dic, game_id)
 
 def insert_dice_into_db(dice, db):
     """ input: Dice object, database object
     """
-
-    if get_dice_from_db(dice.game_id, db) == None:
-        cur = db.cursor()
-        cur.execute("INSERT INTO dice (d1,d2,d3,d4,d5,d6,game_id) VALUES (?,?,?,?,?,?,?)", \
-                    (dice.dice[1],  dice.dice[2], dice.dice[3], dice.dice[4], dice.dice[5],
-                     dice.dice[6], dice.game_id))
-    else:
-        clear_dice(dice.game_id, db)
-        insert_dice_into_db(dice, db)
-    db.commit()
+    data_model.update_object_in_db_by_key(diceToDiceDataModel(dice), "game_id", dice.game_id, db, True)
 
 def initialize_dice(num_players, game_id):
-    """ input: Int number of players, String game_id 
+    """ input: Int number of players, String game_id
     returns Dice
     """
-    dice = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
+    dice_dic = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
     for _ in range(0,num_players*4):
         r = randint(1,6)
-        dice[r] = dice[r] + 1
-    return Dice(dice, game_id)
+        dice_dic[r] = dice_dic[r] + 1
+    return Dice(dice_dic, game_id)
 
 def clear_dice(game_id, db):
     """ input: String game_id
     """
-    cur = db.cursor()
-    cur.execute("delete from dice where game_id=?", game_id)
-    db.commit()
+    data_model.clear_table_by_key(DiceDataModel, "game_id", game_id, db)
